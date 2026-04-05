@@ -1,0 +1,12 @@
+playwright
+beautifulsoup4
+langchain
+langchain-community
+pymupdf
+chromadb
+sentence-transformers
+tqdm
+groq
+streamlit
+supabase
+python-dotenv
