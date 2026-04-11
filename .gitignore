@@ -1,4 +1,5 @@
 # ===== PYTHON / FASTAPI =====
+backend/chroma_db/
 __pycache__/
 *.py[cod]
 *.pyo
@@ -27,6 +28,7 @@ yarn-error.log*
 
 # ===== GENERAL =====
 .DS_Store
+**/.DS_Store
 .idea/
 .vscode/
 *.suo
