@@ -4,7 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from config import settings
-from services import load_embed_model, load_pinecone_index, load_groq_client, ask
+from services import load_pinecone_index, load_groq_client, ask
 
 
 # ── Schemas ───────────────────────────────────────────────────────────────────
