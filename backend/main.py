@@ -21,7 +21,6 @@ class ChatResponse(BaseModel):
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("⚡ Loading clients...")
-    app.state.embed_model = load_embed_model()
     app.state.index       = load_pinecone_index()
     app.state.groq_client = load_groq_client()
     print("✅ Thomas is ready.")
@@ -55,7 +54,6 @@ async def chat(req: ChatRequest):
         result = await ask(
             req.query,
             app.state.index,
-            app.state.embed_model,
             app.state.groq_client,
         )
         return ChatResponse(**result)

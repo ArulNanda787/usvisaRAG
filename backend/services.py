@@ -4,7 +4,11 @@ from sentence_transformers import SentenceTransformer
 from pinecone import Pinecone
 from groq import Groq
 from config import settings
+from functools import lru_cache
 
+@lru_cache()
+def get_embed_model() -> SentenceTransformer:
+    return SentenceTransformer(EMBED_MODEL)
 # ── Constants ─────────────────────────────────────────────────────────────────
 PINECONE_INDEX  = "visa-rag"
 EMBED_MODEL     = "all-MiniLM-L6-v2"
@@ -24,9 +28,6 @@ Rules:
 
 
 # ── Client loaders (called once at startup) ───────────────────────────────────
-def load_embed_model() -> SentenceTransformer:
-    return SentenceTransformer(EMBED_MODEL)
-
 def load_pinecone_index():
     return Pinecone(api_key=settings.pinecone_api_key).Index(PINECONE_INDEX)
 
@@ -43,7 +44,8 @@ async def embed_async(text: str, model: SentenceTransformer) -> list[float]:
 
 
 # ── Retrieve ──────────────────────────────────────────────────────────────────
-async def retrieve(query: str, index, embed_model: SentenceTransformer) -> list[dict]:
+async def retrieve(query: str, index) -> list[dict]:
+    embed_model = get_embed_model()
     query_vector = await embed_async(query, embed_model)
 
     # Primary query
@@ -93,8 +95,8 @@ async def retrieve(query: str, index, embed_model: SentenceTransformer) -> list[
 
 
 # ── Ask ───────────────────────────────────────────────────────────────────────
-async def ask(query: str, index, embed_model: SentenceTransformer, groq_client: Groq) -> dict:
-    chunks = await retrieve(query, index, embed_model)
+async def ask(query: str, index, groq_client: Groq) -> dict:
+    chunks = await retrieve(query, index)
 
     if not chunks:
         return {

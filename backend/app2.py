@@ -59,13 +59,17 @@ def load_clients():
     pc  = Pinecone(api_key=os.environ["PINECONE_API_KEY"])
     index = pc.Index("visa-rag")  
     gc  = Groq(api_key=os.environ["GROQ_API_KEY"])
-    emb = SentenceTransformer("all-MiniLM-L6-v2")
-    return index, gc, emb
+    return index, gc
+
+@st.cache_resource(show_spinner=False)
+def get_embedder():
+    return SentenceTransformer("all-MiniLM-L6-v2")
 
 
 # ── RAG ───────────────────────────────────────────────────────────────────────
-def retrieve(query: str, index, embed_model, top_k: int = 8):
+def retrieve(query: str, index, top_k: int = 8):
     # 1. Embed query (IMPORTANT: same normalization)
+    embed_model = get_embedder()
     query_embedding = embed_model.encode(
         query,
         normalize_embeddings=True
@@ -146,8 +150,8 @@ def retrieve(query: str, index, embed_model, top_k: int = 8):
     return results
 
 
-def ask(question: str, index, groq_client, embed_model) -> dict:
-    chunks = retrieve(question, index, embed_model)
+def ask(question: str, index, groq_client) -> dict:
+    chunks = retrieve(question, index)
 
     if not chunks:
         return {
@@ -590,7 +594,7 @@ st.markdown(f"""
 # Load clients
 # ══════════════════════════════════════════════════════════════════════════════
 try:
-    index, groq_client, embed_model = load_clients()
+    index, groq_client = load_clients()
 except Exception as e:
     st.markdown(f'<div class="err-box">❌ <strong>Failed to initialise clients:</strong> {e}<br><br>'
                 f'Make sure <code>SUPABASE_URL</code>, <code>SUPABASE_KEY</code>, and <code>GROQ_API_KEY</code> '
@@ -747,7 +751,7 @@ if user_input:
     """, unsafe_allow_html=True)
 
     try:
-        result = ask(q, index, groq_client, embed_model)
+        result = ask(q, index, groq_client)
     except Exception as e:
         thinking_placeholder.empty()
         st.markdown(f'<div class="err-box">❌ {e}</div>', unsafe_allow_html=True)
