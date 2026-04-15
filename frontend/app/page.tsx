@@ -13,22 +13,22 @@ export default function Home() {
       <div className="w-full md:w-1/2 flex justify-center md:justify-start mb-6 md:mb-0">
         <div className="flex flex-col gap-4">
           <h1 className="text-4xl md:text-6xl font-bold tracking-tight">
-            <span style={{ fontFamily: "'Playfair Display', serif" }} className="text-yellow-400">Thomas</span>
+            <span className="text-yellow-400 font-sans">Thomas</span>
             <br />
             <span className="text-white font-sans">Your US Visa Assistant</span>
           </h1>
 
-          <p className="text-gray-300 text-lg md:text-xl font-light leading-relaxed max-w-xl">
-            From confusion to approval —{" "}
-            <span className="text-white font-medium">simplify your US visa journey.</span>
+          <p className="text-teal-300 text-lg md:text-xl font-sans max-w-xl">
+            From confusion to approval - 
+            <span className="text-white font-medium"> simplify your US visa journey.</span>
           </p>
 
-          <p className="text-yellow-400 text-sm md:text-base font-semibold tracking-[0.2em] uppercase">
+          <p className="text-yellow-400 text-sm md:text-base font-semibold uppercase">
             Ask &nbsp;·&nbsp; Apply &nbsp;·&nbsp; Go
           </p>
 
           <div className="flex flex-col gap-2 mt-2 border-l-2 border-yellow-400 pl-4">
-            <p className="text-white text-xl md:text-2xl font-bold tracking-tight">
+            <p className="text-white text-xl md:text-2xl font-sans font-bold  ">
               The American Dream Starts Here.
             </p>
             <p className="text-gray-400 text-sm md:text-base font-light leading-relaxed max-w-md">

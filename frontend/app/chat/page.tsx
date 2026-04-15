@@ -29,7 +29,9 @@ const CATEGORY_COLORS: Record<string, string> = {
   wait_times: "#f472b6",
 };
 
-const API = "http://localhost:8000/api/chat";
+const API = process.env.NEXT_PUBLIC_API_URL
+  ? `${process.env.NEXT_PUBLIC_API_URL}/api/chat`
+  : "http://localhost:8000/api/chat";
 
 const s = {
   shell: { display: "flex", flexDirection: "column", height: "100vh", position: "relative", zIndex: 1 } as CSSProperties,
