@@ -201,7 +201,6 @@ export function GlobeCdn({
           key={m.id}
           style={{
             position: "absolute",
-            // @ts-expect-error
             positionAnchor: `--cobe-${m.id}`,
             bottom: "anchor(top)",
             left: "anchor(center)",
@@ -253,7 +252,6 @@ export function GlobeCdn({
     key={a.id}
     style={{
       position: "absolute",
-      // @ts-expect-error
       positionAnchor: `--cobe-arc-${a.id}`,
       bottom: "anchor(top)",
       left: "anchor(center)",
