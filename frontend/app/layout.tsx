@@ -30,7 +30,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">{children}</body>
       {/* 2. Added Google Analytics component. Replace 'G-XXXXXXXXXX' with your ID */}
-      <GoogleAnalytics gaId={process.env.GAID ?? ""} />
+   <GoogleAnalytics gaId={process.env.NEX_PUBLIC_GAID ?? ""} />
     </html>
   );
 }
