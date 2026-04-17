@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { GoogleAnalytics } from '@next/third-parties/google'; // 1. Added import
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,6 +29,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">{children}</body>
+      {/* 2. Added Google Analytics component. Replace 'G-XXXXXXXXXX' with your ID */}
+      <GoogleAnalytics gaId={process.env.GAID ?? ""} />
     </html>
   );
 }
