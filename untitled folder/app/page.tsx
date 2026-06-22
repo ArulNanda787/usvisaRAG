@@ -46,7 +46,7 @@ export default function Home() {
             ))}
           </div>
           <button
-            onClick={() => router.push("/select")}
+            onClick={() => router.push("/chat")}
             className="flex items-center gap-2 px-4 py-2 bg-orange-500 text-white rounded-full text-sm font-semibold hover:bg-orange-600 transition-colors shadow-md"
           >
             <MessageCircle size={15} /> Ask Thomas
@@ -87,7 +87,7 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => router.push("/select")}
+                  onClick={() => router.push("/chat")}
                   className="px-8 py-4 bg-orange-500 text-white rounded-2xl font-bold shadow-xl hover:bg-orange-600 transition-colors flex items-center gap-3"
                   style={{ fontSize: 18 }}
                 >
@@ -237,7 +237,7 @@ export default function Home() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => router.push("/select")}
+              onClick={() => router.push("/chat")}
               className="px-10 py-4 bg-white text-orange-500 rounded-2xl font-bold shadow-2xl transition-all flex items-center gap-3 mx-auto"
               style={{ fontSize: 18 }}
             >

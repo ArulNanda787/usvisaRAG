@@ -10,14 +10,20 @@ from services import load_pinecone_index, load_groq_client, ask
 # ── Schemas ───────────────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
     query: str
+    summary: str = ""
+    history: list[dict] = []
+    category: str = ""
+    category_label: str = ""
+    category_subtitle: str = ""
 
 class ChatResponse(BaseModel):
     answer: str
     sources: list[str]
     categories: list[str]
+    summary: str
 
 
-# ── Lifespan — load all clients once, share across all requests ───────────────
+# ── Lifespan ──────────────────────────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("⚡ Loading clients...")
@@ -33,7 +39,7 @@ app = FastAPI(title="Thomas — US Visa RAG API", version="1.0.0", lifespan=life
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000","https://thomas-front.onrender.com"],
+      allow_origins=["http://localhost:3000", "http://127.0.0.1:3000","https://thomas-front.onrender.com","http://140.238.249.253:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -55,6 +61,11 @@ async def chat(req: ChatRequest):
             req.query,
             app.state.index,
             app.state.groq_client,
+            summary=req.summary,
+            history=req.history,
+            category=req.category,
+            category_label=req.category_label,
+            category_subtitle=req.category_subtitle,
         )
         return ChatResponse(**result)
     except Exception as e:

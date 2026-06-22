@@ -11,17 +11,6 @@ type Message = {
   categories?: string[];
 };
 
-type VisaCategory = {
-  id: string;
-  label: string;
-  subtitle: string;
-  description: string;
-  accent: string;
-  bg: string;
-  border: string;
-  suggested: string[];
-};
-
 const SUGGESTED = [
   { icon: "✈️", label: "B-2 Tourist Visa",  query: "What documents do I need for a B-2 tourist visa?" },
   { icon: "💵", label: "MRV Fee",            query: "How much is the MRV fee for a B1/B2 visa?" },
@@ -156,17 +145,10 @@ export default function Chat() {
   const bottomRef               = useRef<HTMLDivElement>(null);
   const inputRef                = useRef<HTMLInputElement>(null);
   const router                  = useRouter();
-  const [category, setCategory] = useState<VisaCategory | null>(null);
-  const [summary, setSummary] = useState("");
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
-  useEffect(() => {
-  try {
-    const saved = sessionStorage.getItem("thomasCategory");
-    if (saved) setCategory(JSON.parse(saved));
-  } catch {}
-}, []);
 
   async function sendQuery(query: string) {
     if (!query.trim() || loading) return;
@@ -174,21 +156,8 @@ export default function Chat() {
     setInput("");
     setLoading(true);
     try {
-      const res  = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
-  query,
-  summary,
-  history: [
-  ...messages.map(m => ({ role: m.role, content: m.content })),
-  { role: "user", content: query },
-],
-  ...(category && {
-    category: category.id,
-    category_label: category.label,
-    category_subtitle: category.subtitle,
-  }),
-}) });
+      const res  = await fetch(API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ query }) });
       const data = await res.json();
-      setSummary(data.summary ?? "");
       setMessages(prev => [...prev, { role: "assistant", content: data.answer, sources: data.sources, categories: data.categories }]);
     } catch {
       setMessages(prev => [...prev, { role: "assistant", content: "Something went wrong. Make sure the backend is running on port 8000." }]);
@@ -232,7 +201,7 @@ export default function Chat() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button
               className="back-btn"
-              onClick={() => router.push("/select")}
+              onClick={() => router.push("/")}
               style={{
                 display: "flex", alignItems: "center", gap: 6,
                 fontSize: 14, color: "#6b7280", cursor: "pointer",
@@ -253,9 +222,7 @@ export default function Chat() {
 }}><img src="/thomas.png" alt="Thomas" style={{ width: 24, height: 24, borderRadius: "50%", objectFit: "cover" }} /></div>
               <div>
                 <p style={{ fontSize: 15, fontWeight: 700, color: "#111827", lineHeight: 1 }}>Thomas</p>
-                <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>
-                  {category ? `${category.label} · ${category.subtitle}` : "US Visa Assistant · India"}
-                </p>
+                <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 2 }}>US Visa Assistant · India</p>
               </div>
             </div>
           </div>
@@ -352,7 +319,7 @@ export default function Chat() {
           <div style={{ maxWidth: 720, margin: "0 auto", display: "flex", alignItems: "center", gap: 10 }}>
             {messages.length > 0 && (
               <button
-                onClick={() => { setMessages([]); setSummary(""); }}
+                onClick={() => setMessages([])}
                 title="Clear chat"
                 style={{
                   width: 38, height: 38, borderRadius: 10, flexShrink: 0,
@@ -371,7 +338,7 @@ export default function Chat() {
               value={input}
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendQuery(input); }}}
-              placeholder={category ? `Ask about ${category.label.toLowerCase()} visas…` : "Ask about visas, fees, documents, wait times…"}
+              placeholder="Ask about visas, fees, documents, wait times…"
               disabled={loading}
               style={{
                 flex: 1, border: "1.5px solid #fed7aa", borderRadius: 12,
