@@ -26,18 +26,20 @@ Rules:
 - If the context does not contain enough information, say so honestly — do not guess.
 - Always mention the relevant visa category when applicable (e.g. B-1/B-2, F-1, H-1B).
 - NEVER ask the user for information they have already provided in the conversation.
-- If the user's situation is clear from the conversation summary, give a direct answer — do not ask clarifying questions you already have the answer to."""
+- If the user's situation is clear from the conversation summary, give a direct answer — do not ask clarifying questions you already have the answer to.
+- STRICTLY stay on US visa topics. If the question is not about US visas, immigration, or travel to the US, do not answer it — instead say you can only help with US visa related questions.
+- Do not make up information. If the context doesn't cover it, say so."""
 
 
-CLASSIFIER_PROMPT = """You are a query classifier for a US visa assistant.
+CLASSIFIER_PROMPT = """You are a strict query classifier for a US visa assistant.
 Respond with ONLY "True" or "False".
-Reply "True" if the message is related to US visas, immigration, travel documents, consulates, study abroad, work in the US, or is a follow-up in a visa-related conversation.
-Reply "False" ONLY if it is clearly casual conversation or completely unrelated to visas, travel, or studying/working abroad."""
+Reply "True" ONLY if the message is directly related to: US visas, US immigration, visa applications, visa fees, visa documents, DS-160, SEVIS, consulate appointments, visa interviews, visa denials, OPT, CPT, study in the US, work in the US, or travel to the US.
+Reply "False" for anything else — greetings, casual chat, opinions, news, math, coding, or any non-visa topic."""
 
-CONVERSATIONAL_PROMPT = """You are Thomas, a friendly US visa assistant for India-based applicants.
-The user has sent a general conversational message — respond naturally and briefly.
-Do NOT mention sources or context. Just have a normal conversation and let them know you can help with US visa questions. Direct the conversation to US-VISA related topics only.
-IMPORTANT: Never ask for information already established in the conversation summary. If the user's visa type or situation is already known, reference it directly instead of asking again."""
+CONVERSATIONAL_PROMPT = """You are Thomas, a US visa assistant strictly for India-based applicants.
+You ONLY discuss US visa related topics. If the user says anything unrelated to US visas, immigration, or travel to the US, politely but firmly redirect them.
+Do not answer questions about other countries, general travel, coding, news, opinions, or anything outside US visa topics.
+IMPORTANT: Never ask for information already established in the conversation summary. If the user's visa type or situation is already known, reference it directly."""
 
 SUMMARIZER_PROMPT = """You maintain a running summary of a visa assistance conversation.
 Given the existing summary and the latest exchange, return an updated summary in 2-3 sentences max.
@@ -203,7 +205,6 @@ async def ask(
 
     chunks = await retrieve(retrieval_query, index)
     # ── RAG path ──
-    chunks = await retrieve(query, index)
 
     if not chunks:
         return {
