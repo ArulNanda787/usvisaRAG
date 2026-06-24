@@ -79,10 +79,11 @@ function AssistantBubble({ content, sources = [], categories = [] }: {
     <div style={{ display: "flex", justifyContent: "flex-start", gap: 8 }}>
       {/* Avatar */}
       <div style={{
-        width: 32, height: 32, borderRadius: "50%", overflow: "hidden",
+        width: 32, height: 32, borderRadius: "50%", background: "#f97316",
+        display: "flex", alignItems: "center", justifyContent: "center",
         flexShrink: 0, marginTop: 2,
       }}>
-        <img src="/thomas.png" alt="Thomas" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+        <Bot size={16} color="#fff" />
       </div>
       {/* Bubble */}
       <div style={{

@@ -1,7 +1,7 @@
 "use client"
 
 import { motion, useScroll, useTransform } from "motion/react";
-import { useRef, useEffect } from "react";
+import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import { GlobeCdn } from "./components/globe";
 import { ScrollStory } from "./components/ScrollStory";
@@ -26,9 +26,7 @@ export default function Home() {
   const { scrollYProgress: heroScroll } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
   const heroOpacity = useTransform(heroScroll, [0, 0.6], [1, 0]);
   const heroY = useTransform(heroScroll, [0, 0.6], [0, -60]);
-  useEffect(() => {
-  window.scrollTo(0, 0);
-  }, []);
+
   return (
     <div className="min-h-screen bg-white" style={{ fontFamily: "'Plus Jakarta Sans', 'Inter', sans-serif" }}>
 
@@ -264,11 +262,12 @@ export default function Home() {
           </div>
           <div className="text-center">
           <p className="text-gray-500 text-sm">© 2026 Thomas. For informational purposes only. Not legal advice.</p>
-          <p className="text-gray-600 text-sm mt-2">Made with 🤍 by <span className="text-orange-400 font-semibold">Arul Nanda</span> for the World</p>
+          <p className="text-gray-600 text-sm mt-1">Made with ♡ by <span className="text-orange-400 font-semibold">Arul Nanda</span> for the World</p>
         </div>
-          <div className="flex gap-6 text-gray-400 text-sm">
+          <div className="flex gap-4 text-gray-400 text-sm">
+            <a href="#" className="hover:text-orange-400 transition-colors">Privacy</a>
             <a href="/terms" className="hover:text-orange-400 transition-colors">Terms</a>
-            <a href="https://www.linkedin.com/in/arul-nanda" className="hover:text-orange-400 transition-colors">Contact</a>
+            <a href="www.linkedin.com/in/arul-nanda" className="hover:text-orange-400 transition-colors">Contact</a>
           </div>
         </div>
       </footer>
