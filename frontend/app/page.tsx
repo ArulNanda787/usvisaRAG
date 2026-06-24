@@ -260,12 +260,11 @@ export default function Home() {
           <div className="flex items-center gap-2">
             <img src="/thomas.png" alt="Thomas" className="w-8 h-8 rounded-full object-cover" />
             <span className="text-white font-bold">Thomas</span>
-            <span className="text-gray-400 text-sm ml-2">— Your US Visa HelpBot</span>
           </div>
           <div className="text-center">
-          <p className="text-gray-500 text-sm">© 2026 Thomas. For informational purposes only. Not legal advice.</p>
-          <p className="text-gray-600 text-sm mt-2">Made with 🤍 by <span className="text-orange-400 font-semibold">Arul Nanda</span> for the World</p>
-        </div>
+            <p className="text-gray-500 text-sm">© 2026 Thomas. For informational purposes only. Not legal advice.</p>
+            <p className="text-gray-600 text-sm mt-2">Made with 🤍 by <span className="text-orange-400 font-semibold">Arul Nanda</span> for the World</p>
+          </div>
           <div className="flex gap-6 text-gray-400 text-sm">
             <a href="/terms" className="hover:text-orange-400 transition-colors">Terms</a>
             <a href="https://www.linkedin.com/in/arul-nanda" className="hover:text-orange-400 transition-colors">Contact</a>
