@@ -94,6 +94,9 @@ export default function SelectCategory() {
         }
         .cat-card:active { transform: translateY(-1px); }
         .back-btn:hover { color: #f97316 !important; border-color: #f97316 !important; }
+        @media (max-width: 480px) {
+          .cat-grid { grid-template-columns: 1fr !important; }
+        }
       `}</style>
 
       <div style={{ minHeight: "100vh", background: "#fff7ed", display: "flex", flexDirection: "column" }}>
@@ -167,12 +170,13 @@ export default function SelectCategory() {
           </div>
 
           {/* Cards — single row */}
-          <div style={{
+          <div  className="cat-grid"
+          style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: 14,
+            gridTemplateColumns: "repeat(2, 1fr)",
+            gap: 12,
             width: "100%",
-            maxWidth: 960,
+            maxWidth: 640,
           }}>
             {CATEGORIES.map((cat, idx) => {
               const Icon = cat.icon;
