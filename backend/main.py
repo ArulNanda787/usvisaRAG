@@ -95,6 +95,8 @@ def health():
 async def chat(request: Request, req: ChatRequest):
     if not req.query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
+    if len(req.query) > 500:
+        raise HTTPException(status_code=400, detail="Query too long. Please keep it under 500 characters.")
     try:
         result = await ask(
             req.query,
