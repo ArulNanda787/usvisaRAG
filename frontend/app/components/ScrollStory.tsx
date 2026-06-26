@@ -175,6 +175,7 @@ function HappyPerson() {
 function StageCard({ stage, isActive }: { stage: (typeof stages)[0]; isActive: boolean }) {
   return (
     <motion.div
+      data-stage={stage.id}
       className={`rounded-3xl p-8 md:p-12 bg-gradient-to-br ${stage.bg} border border-orange-100 shadow-xl overflow-hidden relative`}
       animate={{ opacity: isActive ? 1 : 0.35, scale: isActive ? 1 : 0.97 }}
       transition={{ duration: 0.5 }}
@@ -232,18 +233,27 @@ export function ScrollStory() {
   const [activeStage, setActiveStage] = useState(0);
 
   useEffect(() => {
-    return scrollYProgress.on("change", (v) => {
-      if (v < 0.33) setActiveStage(0);
-      else if (v < 0.66) setActiveStage(1);
-      else setActiveStage(2);
-    });
-  }, [scrollYProgress]);
+    const updateStage = () => {
+      const cards = containerRef.current?.querySelectorAll("[data-stage]");
+      if (!cards) return;
+      const mid = window.innerHeight / 2;
+      cards.forEach((card) => {
+        const { top, bottom } = card.getBoundingClientRect();
+        if (top <= mid && bottom >= mid) {
+          setActiveStage(Number(card.getAttribute("data-stage")));
+        }
+      });
+    };
+    window.addEventListener("scroll", updateStage, { passive: true });
+    updateStage();
+    return () => window.removeEventListener("scroll", updateStage);
+  }, []);
 
   // Sticky progress indicator
   const progressWidth = useTransform(scrollYProgress, [0, 1], ["0%", "100%"]);
 
   return (
-    <section ref={containerRef} className="relative" style={{ minHeight: "300vh" }}>
+    <section ref={containerRef} className="relative">
       {/* Sticky wrapper */}
       <div className="sticky top-0 z-10 py-4 px-4 bg-white/80 backdrop-blur-sm border-b border-orange-100">
         <div className="max-w-3xl mx-auto">
@@ -264,7 +274,7 @@ export function ScrollStory() {
                     : "text-gray-400 hover:text-orange-500"
                 }`}
               >
-                {i + 1}. {s.title.split(" ").slice(0, 2).join(" ")}
+                {i + 1}. {["Lost", "Thomas to the rescue!", "Approved"][i]}
               </button>
             ))}
           </div>
@@ -275,7 +285,7 @@ export function ScrollStory() {
       </div>
 
       {/* Stage panels - each occupies ~1 viewport */}
-      <div className="max-w-4xl mx-auto px-4 py-16 space-y-24">
+      <div className="max-w-4xl mx-auto px-4 pt-8 pb-0 space-y-12">
         {stages.map((stage, i) => (
           <StageCard key={stage.id} stage={stage} isActive={activeStage === i} />
         ))}

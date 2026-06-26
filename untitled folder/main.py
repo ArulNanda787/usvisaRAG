@@ -1,5 +1,4 @@
 from contextlib import asynccontextmanager
-import asyncio
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -7,12 +6,10 @@ from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from fastapi import Request
-from supabase import create_client, Client        # ← new
 from config import settings
 from services import load_pinecone_index, load_groq_client, ask
 
 limiter = Limiter(key_func=get_remote_address)
-
 # ── Schemas ───────────────────────────────────────────────────────────────────
 class ChatRequest(BaseModel):
     query: str
@@ -29,36 +26,12 @@ class ChatResponse(BaseModel):
     summary: str
 
 
-# ── Supabase logger ───────────────────────────────────────────────────────────
-async def log_query(
-    supabase: Client,
-    query: str,
-    category: str
-):
-    """Fire-and-forget: log the query to Supabase without blocking the response."""
-    try:
-        loop = asyncio.get_event_loop()
-        await loop.run_in_executor(
-            None,
-            lambda: supabase.table("chat_logs").insert({
-                "query":      query,
-                "category":   category,
-            }).execute()
-        )
-    except Exception as e:
-        print(f"⚠️  Supabase logging failed: {e}")   # non-fatal
-
-
 # ── Lifespan ──────────────────────────────────────────────────────────────────
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("⚡ Loading clients...")
-    app.state.index         = load_pinecone_index()
-    app.state.groq_client   = load_groq_client()
-    app.state.supabase      = create_client(          # ← new
-        settings.supabase_url,
-        settings.supabase_service_key,
-    )
+    app.state.index       = load_pinecone_index()
+    app.state.groq_client = load_groq_client()
     print("✅ Thomas is ready.")
     yield
     print("🛑 Shutting down.")
@@ -72,12 +45,7 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://thomas-front.onrender.com",
-        "http://140.238.249.253:3000",
-    ],
+      allow_origins=["http://localhost:3000", "http://127.0.0.1:3000","https://thomas-front.onrender.com","http://140.238.249.253:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -91,7 +59,7 @@ def health():
 
 
 @app.post("/api/chat", response_model=ChatResponse)
-@limiter.limit("10/hour")
+@limiter.limit("8/hour") 
 async def chat(request: Request, req: ChatRequest):
     if not req.query.strip():
         raise HTTPException(status_code=400, detail="Query cannot be empty.")
@@ -106,14 +74,6 @@ async def chat(request: Request, req: ChatRequest):
             category_label=req.category_label,
             category_subtitle=req.category_subtitle,
         )
-
-        # Log to Supabase (non-blocking — won't slow down the response)
-        asyncio.create_task(log_query(
-            app.state.supabase,
-            req.query,
-            req.category
-        ))
-
         return ChatResponse(**result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

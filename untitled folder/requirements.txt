@@ -9,4 +9,3 @@ pydantic-settings
 python-multipart
 starlette
 slowapi
-supabase

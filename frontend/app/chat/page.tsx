@@ -1,5 +1,6 @@
 "use client";
 
+import { trackEvent } from "@/lib/analytics";
 import { useState, useRef, useEffect, CSSProperties } from "react";
 import { useRouter } from "next/navigation";
 import { Send, RotateCcw, ArrowLeft, Bot } from "lucide-react";
@@ -157,6 +158,7 @@ export default function Chat() {
   const router                  = useRouter();
   const [category, setCategory] = useState<VisaCategory | null>(null);
   const [summary, setSummary] = useState("");
+  const [rateLimited, setRateLimited] = useState(false);
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
@@ -186,6 +188,12 @@ export default function Chat() {
     category_subtitle: category.subtitle,
   }),
 }) });
+      if (res.status === 429) {
+        setRateLimited(true);
+        setMessages(prev => [...prev, { role: "assistant", content: "You've reached the chat limit!. Please wait an hour and try again! 🙏" }]);
+        setLoading(false); 
+        return;
+      }
       const data = await res.json();
       setSummary(data.summary ?? "");
       setMessages(prev => [...prev, { role: "assistant", content: data.answer, sources: data.sources, categories: data.categories }]);
@@ -231,7 +239,7 @@ export default function Chat() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button
               className="back-btn"
-              onClick={() => router.push("/select")}
+              onClick={() => { trackEvent("button_click", { button_id: "back_to_select", page: "chat" }); router.push("/select"); }}
               style={{
                 display: "flex", alignItems: "center", gap: 6,
                 fontSize: 14, color: "#6b7280", cursor: "pointer",
@@ -288,6 +296,9 @@ export default function Chat() {
                   <p style={{ fontSize: 16, color: "#6b7280", maxWidth: 380, margin: "0 auto" }}>
                     Non-immigrant visa guidance from official US government sources
                   </p>
+                  <p style={{ fontSize: 13, color: "#f97316", maxWidth: 380, margin: "8px auto 0", background: "#fff7ed", border: "1px solid #fed7aa", borderRadius: 8, padding: "8px 14px" }}>
+                    Do not share sensitive personal information such as passport numbers, SSN, or financial details.
+                  </p>
                 </div>
 
                 <div style={{ width: "100%", maxWidth: 520 }}>
@@ -300,7 +311,10 @@ export default function Chat() {
                       <button
                         key={s2.label}
                         className="suggest-btn"
-                        onClick={() => sendQuery(s2.query)}
+                        onClick={() => {
+                          trackEvent("suggestion_clicked", { suggestion_label: s2.label, suggestion_query: s2.query, page: "chat" });
+                          sendQuery(s2.query);
+                        }}
                         style={{
                           display: "flex", alignItems: "center", gap: 10,
                           padding: "12px 16px", borderRadius: 12,
@@ -343,6 +357,13 @@ export default function Chat() {
         </div>
 
         {/* INPUT BAR */}
+        {rateLimited && (
+              <div style={{ textAlign: "center", padding: "8px 16px", background: "#fef3c7", borderTop: "1px solid #fcd34d" }}>
+                <p style={{ fontSize: 13, color: "#92400e", margin: 0 }}>
+                  ⏳ Message limit reached. Come back in an hour!
+                </p>
+              </div>
+        )}
         <div style={{
           flexShrink: 0, borderTop: "1px solid #fed7aa",
           background: "#ffffff", padding: "14px 16px 12px",
@@ -371,7 +392,7 @@ export default function Chat() {
               onChange={e => setInput(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendQuery(input); }}}
               placeholder={category ? `Ask about ${category.label.toLowerCase()} visas…` : "Ask about visas, fees, documents, wait times…"}
-              disabled={loading}
+              disabled={loading || rateLimited}
               style={{
                 flex: 1, border: "1.5px solid #fed7aa", borderRadius: 12,
                 padding: "12px 18px", fontSize: 16, color: "#111827",
@@ -382,12 +403,12 @@ export default function Chat() {
             <button
               className="send-btn"
               onClick={() => sendQuery(input)}
-              disabled={loading || !input.trim()}
+              disabled={loading || !input.trim() || rateLimited}
               style={{
                 width: 42, height: 42, borderRadius: 12, flexShrink: 0,
                 border: "none", background: "#f97316", color: "#fff",
                 cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-                opacity: loading || !input.trim() ? 0.4 : 1,
+                opacity: loading || !input.trim() || rateLimited ? 0.4 : 1,
                 display: "flex", alignItems: "center", justifyContent: "center",
                 transition: "background 0.15s, opacity 0.15s",
               }}

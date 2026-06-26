@@ -1,5 +1,5 @@
 "use client";
-
+import { trackEvent } from "@/lib/analytics";
 import { useRouter } from "next/navigation";
 import { GraduationCap, Briefcase, Users, Plane, Shield, ChevronRight, ArrowLeft } from "lucide-react";
 
@@ -70,7 +70,7 @@ export default function SelectCategory() {
   const router = useRouter();
 
   function handleSelect(cat: (typeof CATEGORIES)[number]) {
-    // Persist selection so the chat page can read it
+    trackEvent("category_selected", { category_id: cat.id, category_label: cat.label, page: "select" });
     sessionStorage.setItem("thomasCategory", JSON.stringify(cat));
     router.push("/chat");
   }
@@ -111,7 +111,7 @@ export default function SelectCategory() {
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <button
               className="back-btn"
-              onClick={() => router.push("/")}
+              onClick={() => { trackEvent("button_click", { button_id: "back_to_home", page: "select" }); router.push("/"); }}
               style={{
                 display: "flex", alignItems: "center", gap: 6,
                 fontSize: 14, color: "#6b7280", cursor: "pointer",

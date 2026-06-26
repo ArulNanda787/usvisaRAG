@@ -1,5 +1,5 @@
 "use client"
-
+import { trackEvent } from "@/lib/analytics";
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
@@ -50,7 +50,7 @@ export default function Home() {
             ))}
           </div>
           <button
-            onClick={() => router.push("/select")}
+            onClick={() => { trackEvent("button_click", { button_id: "nav_ask_thomas", page: "home" }); router.push("/select"); }}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-orange-500 text-white rounded-full text-xs font-semibold hover:bg-orange-600 transition-colors shadow-md md:px-4 md:py-2 md:text-sm md:gap-2"
           >
             <MessageCircle size={13} className="md:hidden" />
@@ -93,7 +93,7 @@ export default function Home() {
                 <motion.button
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
-                  onClick={() => router.push("/select")}
+                  onClick={() => { trackEvent("button_click", { button_id: "hero_start_journey", page: "home" }); router.push("/select"); }}
                   className="px-8 py-4 bg-orange-500 text-white rounded-2xl font-bold shadow-xl hover:bg-orange-600 transition-colors flex items-center gap-3"
                   style={{ fontSize: 18 }}
                 >
@@ -144,7 +144,7 @@ export default function Home() {
 
       {/* HOW IT WORKS */}
       <div id="how-it-works">
-        <div className="max-w-4xl mx-auto px-6 pt-24 pb-8 text-center">
+        <div className="max-w-4xl mx-auto px-6 pt-24 pb-2 text-center">
           <p className="text-orange-500 text-sm font-bold tracking-widest uppercase mb-3">Your Journey</p>
           <h2 className="text-gray-900" style={{ fontSize: "clamp(28px, 4vw, 48px)", fontWeight: 800 }}>
             From Confused to Approved
@@ -157,7 +157,7 @@ export default function Home() {
       </div>
 
       {/* FEATURES */}
-      <section id="features" className="py-24 bg-gradient-to-b from-white to-orange-50">
+      <section id="features" className="pt-10 pb-24 bg-gradient-to-b from-white to-orange-50">
         <div className="max-w-6xl mx-auto px-6">
           <div className="text-center mb-14">
             <p className="text-orange-500 text-sm font-bold tracking-widest uppercase mb-3">What Thomas Does</p>
@@ -195,7 +195,7 @@ export default function Home() {
               Real People, Real Approvals
             </h2>
           </div>
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6 items-stretch">
             {testimonials.map((t, i) => (
               <motion.div
                 key={t.name}
@@ -203,10 +203,10 @@ export default function Home() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.15 }}
-                className="p-6 rounded-2xl bg-orange-50 border border-orange-100 relative"
+                className="p-6 rounded-2xl bg-orange-50 border border-orange-100 relative flex flex-col"
               >
                 <div className="text-orange-300 text-4xl leading-none mb-4">"</div>
-                <p className="text-gray-700 text-sm leading-relaxed mb-6 italic">{t.text}</p>
+                <p className="text-gray-700 text-sm leading-relaxed mb-6 italic flex-1">{t.text}</p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-orange-200 flex items-center justify-center text-xl">{t.avatar}</div>
                   <div>
@@ -243,7 +243,7 @@ export default function Home() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.97 }}
-              onClick={() => router.push("/select")}
+              onClick={() => { trackEvent("button_click", { button_id: "cta_chat_free", page: "home" }); router.push("/select"); }}
               className="px-10 py-4 bg-white text-orange-500 rounded-2xl font-bold shadow-2xl transition-all flex items-center gap-3 mx-auto"
               style={{ fontSize: 18 }}
             >
@@ -266,8 +266,14 @@ export default function Home() {
             <p className="text-gray-600 text-sm mt-2">Made with 🤍 by <span className="text-orange-400 font-semibold">Arul Nanda</span> for the World</p>
           </div>
           <div className="flex gap-6 text-gray-400 text-sm">
-            <a href="/terms" className="hover:text-orange-400 transition-colors">Terms</a>
-            <a href="https://www.linkedin.com/in/arul-nanda" className="hover:text-orange-400 transition-colors">Contact</a>
+            <a   href="/terms"
+              onClick={() => trackEvent("footer_link_click", { link: "terms", page: "home" })}
+              className="hover:text-orange-400 transition-colors"
+            >Terms</a>
+            <a href="https://www.linkedin.com/in/arul-nanda"
+              onClick={() => trackEvent("footer_link_click", { link: "contact", page: "home" })}
+              className="hover:text-orange-400 transition-colors"
+            >Contact</a>
           </div>
         </div>
       </footer>
