@@ -77,6 +77,9 @@ app.add_middleware(
         "http://127.0.0.1:3000",
         "https://thomas-front.onrender.com",
         "http://140.238.249.253:3000",
+        "https://thomasvisa.com",
+        "http://thomasvisa.com",
+        "https://www.thomasvisa.com"
     ],
     allow_credentials=True,
     allow_methods=["*"],
