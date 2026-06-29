@@ -100,6 +100,14 @@ This includes but is not limited to: visa denials, missed deadlines, incorrect f
 
           {/* Hero */}
           <div style={{ textAlign: "center", marginBottom: 48 }}>
+            <div style={{
+              display: "inline-flex", alignItems: "center", justifyContent: "center",
+              width: 64, height: 64, borderRadius: 18,
+              background: "#fff7ed", border: "1.5px solid #fed7aa",
+              fontSize: 32, marginBottom: 20,
+            }}>
+              ⚖️
+            </div>
             <h1 style={{
               fontSize: 32, fontWeight: 800, color: "#111827",
               marginBottom: 12, letterSpacing: "-0.5px",
